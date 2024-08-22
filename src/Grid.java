@@ -1,38 +1,31 @@
-import java.awt.Graphics;
 import java.awt.Point;
+import java.util.Optional;
 
 public class Grid {
-  Cell[][] cells = new Cell[20][20];
-  
-  public Grid() {
-    for(int i=0; i<cells.length; i++) {
-      for(int j=0; j<cells[i].length; j++) {
-        cells[i][j] = new Cell(colToLabel(i), j, 10+Cell.size*i, 10+Cell.size*j);
-      }
+    private Cell[][] cells;
+
+    public Grid() {
+        // Initialize the grid with cells, assuming it's a rectangular grid.
+        cells = new Cell[10][10]; // Example size
+        for (int i = 0; i < cells.length; i++) {
+            for (int j = 0; j < cells[i].length; j++) {
+                cells[i][j] = new Cell((char)('A' + i), j + 1, i * Cell.size, j * Cell.size);
+            }
+        }
     }
-  }
 
-  private char colToLabel(int col) {
-    return (char) (col + Character.valueOf('A'));
-  }
+    public Optional<Cell> cellAtPoint(Point p) {
+        if (p == null) {
+            return Optional.empty();
+        }
 
-  private int labelToCol(char col) {
-    return (int) (col - Character.valueOf('A'));
-  }
+        int col = p.x / Cell.size;
+        int row = p.y / Cell.size;
 
-  public void paint(Graphics g, Point mousePos) {
-    for(int i=0; i<cells.length; i++) {
-      for(int j=0; j<cells[i].length; j++) {
-        cells[i][j].paint(g, mousePos);
-      }
+        if (col < 0 || col >= cells.length || row < 0 || row >= cells[0].length) {
+            return Optional.empty();
+        }
+
+        return Optional.of(cells[col][row]);
     }
-  }
-
-  public Cell cellAtColRow(int c, int r) {
-    return cells[c][r];
-  }
-
-  public Cell cellAtColRow(char c, int r) {
-    return cellAtColRow(labelToCol(c), r);
-  }
 }
